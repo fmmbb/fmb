@@ -413,11 +413,11 @@ function Footer() {
           </div>
         </div>
         <div className="mt-10 border-t border-border pt-6 text-xs leading-relaxed text-muted-foreground">
-          <p>
+          {/* <p>
             F&M Bank is a fictional brand created for this prototype. Deposits are held at an
             FDIC-insured institution, subject to applicable limits. Rates are illustrative and may
             change. Equal Housing Lender.
-          </p>
+          </p> */}
         </div>
       </div>
     </footer>

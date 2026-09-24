@@ -1,5 +1,8 @@
+'use client'
 // import { createFileRoute, Link } from "@tanstack/react-router";
 import Link from "next/link";
+import Cookies from "js-cookie";
+import { useEffect,useState } from "react";
 // export const Route = createFileRoute("/dashboard")({
 //   head: () => ({
 //     meta: [
@@ -26,17 +29,17 @@ import Link from "next/link";
 const EASE = "var(--ease)";
 
 const ACCOUNTS = [
-  { name: "Everyday Checking", mask: "•• 4182", balance: "$16,150.16", delta: "+$1,240.00" },
-  { name: "High-Yield Savings", mask: "•• 9037", balance: "$32,140.00", delta: "+$118.42" },
+  { name: "Everyday Checking", mask: "•• 4182", balance: "$0.00", delta: "+$1,240.00" },
+  { name: "High-Yield Savings", mask: "•• 9037", balance: "$0.00", delta: "+$118.42" },
 ];
 
-const TRANSACTIONS = [
-  { name: "Whole Foods Market", category: "Groceries", date: "Sep 23", amount: "-$84.12" },
-  { name: "Payroll — Northwind Studio", category: "Income", date: "Sep 22", amount: "+$2,480.00", positive: true },
-  { name: "Con Edison", category: "Utilities", date: "Sep 21", amount: "-$96.40" },
-  { name: "Blue Bottle Coffee", category: "Dining", date: "Sep 20", amount: "-$6.75" },
-  { name: "Transfer to Savings", category: "Transfer", date: "Sep 19", amount: "-$500.00" },
-  { name: "Spotify", category: "Subscriptions", date: "Sep 18", amount: "-$11.99" },
+const TRANSACTIONS: any[] = [
+//   { name: "Whole Foods Market", category: "Groceries", date: "Sep 23", amount: "-$84.12" },
+//   { name: "Payroll — Northwind Studio", category: "Income", date: "Sep 22", amount: "+$2,480.00", positive: true },
+//   { name: "Con Edison", category: "Utilities", date: "Sep 21", amount: "-$96.40" },
+//   { name: "Blue Bottle Coffee", category: "Dining", date: "Sep 20", amount: "-$6.75" },
+//   { name: "Transfer to Savings", category: "Transfer", date: "Sep 19", amount: "-$500.00" },
+//   { name: "Spotify", category: "Subscriptions", date: "Sep 18", amount: "-$11.99" },
 ];
 
 const QUICK_ACTIONS = ["Transfer", "Pay a bill", "Deposit check", "Statements"];
@@ -75,7 +78,7 @@ function Header() {
   );
 }
 
-function Overview() {
+function Overview({user}: {user: any}) {
   return (
     <section id="overview" className="scroll-mt-24">
       <div className="grid gap-4 lg:grid-cols-12">
@@ -90,7 +93,7 @@ function Overview() {
                 +2.4%
               </span>
             </div>
-            <div className="mt-2 font-mono text-4xl font-medium tracking-tight">$48,290.16</div>
+            <div className="mt-2 font-mono text-4xl font-medium tracking-tight">{user?.amount ?? "$0"}.00</div>
             <p className="mt-1 text-xs text-muted-foreground">Across 2 accounts · updated just now</p>
             <div className="mt-5 flex h-24 items-end gap-1.5">
               {[
@@ -178,7 +181,8 @@ function Activity() {
           <span className="hidden text-right sm:block">Date</span>
           <span className="text-right">Amount</span>
         </div>
-        {TRANSACTIONS.map((tx) => (
+        {!TRANSACTIONS&&'Nothing to show yet'} 
+        {TRANSACTIONS && TRANSACTIONS.map((tx) => (
           <div
             key={tx.name + tx.date}
             className="grid grid-cols-[1fr_auto] items-center border-t border-border px-5 py-3.5 transition-colors first:border-t-0 hover:bg-white/60 sm:grid-cols-[1fr_8rem_6rem_7rem]"
@@ -240,7 +244,7 @@ function Goals() {
               (c) Insight
             </div>
             <p className="mt-3 text-balance text-lg font-semibold leading-snug">
-              You earned $118.42 in interest this month — up 6% from August.
+              Users earned $118.42 in interest this month — up 6% from August.
             </p>
             <Link
               href="/"
@@ -256,6 +260,18 @@ function Goals() {
 }
 
 export default function DashboardPage() {
+    const [user, setUser] = useState<any>(null);
+
+    useEffect(() => {
+        if(!user){
+            const userCookie = Cookies.get("user");
+        
+          const userC = userCookie ? JSON.parse(userCookie) : null;
+          setUser(userC);
+          console.log("User data from cookie:", user);
+
+        }
+    },[user])
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-background font-sans text-foreground antialiased">
       <div className="pointer-events-none absolute inset-0" aria-hidden="true">
@@ -272,19 +288,19 @@ export default function DashboardPage() {
               Dashboard
             </div>
             <h1 className="mt-2 text-3xl font-extrabold tracking-tight md:text-4xl">
-              Good evening, Ada.
+              Good evening, {user?.fullName.split(" ")[0]}
             </h1>
             <p className="mt-2 text-sm text-muted-foreground">
               Thursday, September 24 · Everything looks healthy.
             </p>
           </div>
-          <Overview />
+          <Overview user={user} />
           <Activity />
           <Goals />
-          <p className="mt-10 text-center text-xs leading-relaxed text-muted-foreground">
+          {/* <p className="mt-10 text-center text-xs leading-relaxed text-muted-foreground">
             F&M Bank is a fictional brand created for this prototype. Balances, transactions, and
             insights are sample data. Equal Housing Lender.
-          </p>
+          </p> */}
         </main>
       </div>
     </div>
