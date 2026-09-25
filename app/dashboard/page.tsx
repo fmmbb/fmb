@@ -207,8 +207,9 @@ function Activity() {
 }
 
 function Goals() {
-  const goal = { name: "Emergency fund", saved: 32140, target: 40000 };
-  const pct = Math.round((goal.saved / goal.target) * 100);
+  const goal = { name: "Emergency fund", saved: 0, target: 0 };
+  const nume = Math.round((goal.saved / goal.target) * 100);
+  const pct = nume?nume:0;
 
   return (
     <section id="goals" className="mt-10 scroll-mt-24">
